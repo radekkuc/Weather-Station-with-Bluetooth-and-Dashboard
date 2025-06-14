@@ -1,0 +1,54 @@
+#include "usb_device.h"
+#include "usbd_cdc_if.h"
+#include "adc.h"
+
+#define RL 10.0f		//obciążenie do kalibracji
+#define VREF 3.3f		//napięcie do kalibracji
+#define ADC_RES 4095.0f		//12 bit ADC
+
+extern ADC_HandleTypeDef hadc1;
+
+static float R0 = 1.0f;   // Domyślna wartość R0
+
+int8_t MQ9_calbration(void) {
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, 20);
+	float sensorValue;
+	float currentValue;
+	char current[20];
+
+	for(int x = 0 ; x < 10 ; x++)			//uśrednianie
+	    {
+			currentValue = HAL_ADC_GetValue(&hadc1);
+	        sensorValue = sensorValue + currentValue;
+
+	        sprintf(current, "%d", currentValue);
+	        DC_Transmit_FS((uint8_t*)"\n\rMQ-9 calibration: ",18);
+	        HAL_Delay(100);
+	        CDC_Transmit_FS((uint8_t*)current, strlen(current));
+	        HAL_Delay(100);
+
+	    }
+	sensorValue = sensorValue/10.0;
+
+	HAL_ADC_Stop(&hadc1);
+
+	float voltage = (sensorValue * VREF) / ADC_RES;
+	float RS = RL * (VREF - voltage) / voltage;
+	R0 = RS/10;
+
+	return 0;
+}
+
+
+int8_t MQ9_read_data(void) {
+
+
+	return 0;
+}
+
+void MQ9_print_sensor_data(uint16_t mq9_sens){
+
+}
+
+

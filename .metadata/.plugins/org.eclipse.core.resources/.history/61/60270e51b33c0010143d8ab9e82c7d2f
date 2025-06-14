@@ -1,0 +1,6 @@
+#ifndef INC_MQ9_H_
+#define INC_MQ9_H_
+
+int8_t MQ9_calbration(void);
+
+#endif /* INC_MQ9_H_ */

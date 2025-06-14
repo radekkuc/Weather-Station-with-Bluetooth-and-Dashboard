@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;weather_station/Core/Inc/cabonox_sens.h&apos; to &apos;mq9.h&apos;" description="Rename resource &apos;cabonox_sens.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Inc/cabonox_sens.h" name="mq9.h" stamp="1748532989604" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;weather_station/Core/Src/carbonox_sens.c&apos; to &apos;mq9.c&apos;" description="Rename resource &apos;carbonox_sens.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Core/Src/carbonox_sens.c" name="mq9.c" stamp="1748532998270" updateReferences="true"/>
+</session>

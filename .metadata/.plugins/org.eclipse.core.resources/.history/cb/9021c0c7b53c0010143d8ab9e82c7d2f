@@ -1,0 +1,82 @@
+#include "usb_device.h"
+#include "usbd_cdc_if.h"
+#include "adc.h"
+#include "mq9.h"
+#include <math.h>
+
+#define RL 10.0f		//obciążenie do kalibracji
+#define VREF 3.3f		//napięcie do kalibracji
+#define ADC_RES 4095.0f		//12 bit ADC
+
+extern ADC_HandleTypeDef hadc1;
+
+static float R0 = 1.0f;   // Domyślna wartość R0
+
+int8_t MQ9_calbration(void) {
+	float sensorValue = 0.0f;
+	int currentValue;
+	char current[20];
+
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, 30);
+
+	for(int x = 0 ; x < 10 ; x++)			//uśrednianie
+	    {
+			HAL_ADC_Start(&hadc1);
+			currentValue = HAL_ADC_GetValue(&hadc1);
+	        sensorValue = sensorValue + currentValue;
+
+	        sprintf(current, "%d", currentValue);
+	        CDC_Transmit_FS((uint8_t*)"\n\rMQ-9 calibration: ",22);
+	        HAL_Delay(100);
+	        CDC_Transmit_FS((uint8_t*)current, strlen(current));
+	        HAL_Delay(1000);
+
+	    }
+	sensorValue = sensorValue/10.0;
+	currentValue = sensorValue;
+	sprintf(current, "%d", currentValue);
+	CDC_Transmit_FS((uint8_t*)"\n\rMQ-9 after calibration: ",25);
+	HAL_Delay(100);
+	CDC_Transmit_FS((uint8_t*)current, strlen(current));
+
+	HAL_ADC_Stop(&hadc1);
+
+	float voltage = (sensorValue * VREF) / ADC_RES;
+	float rs = RL * (VREF - voltage) / voltage;
+	R0 = rs/10;
+
+	return 0;
+}
+
+
+int8_t MQ9_read_data(void) {
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, 30);
+	float sensorValue = HAL_ADC_GetValue(&hadc1);
+	HAL_ADC_Stop(&hadc1);
+
+	float voltage = (sensorValue * VREF) / ADC_RES;
+	float rs = RL * (VREF - voltage) / voltage;
+	float ratio = rs / R0;
+
+	float ppm = 1000*powf(ratio, -1.8);
+	MQ9_print_sensor_data(ppm,ratio);
+	return 0;
+}
+
+void MQ9_print_sensor_data(float ppm_val, float ratio_val){
+	char ppm[10] = "";
+	char ratio[10] = "";
+	sprintf(ppm, "%0.2f", ppm_val);
+	sprintf(ratio, "%0.2f", ratio_val);
+	CDC_Transmit_FS((uint8_t*)"\n\rThe estimated value based on Rs/R0 = ",41);
+	HAL_Delay(30);
+	CDC_Transmit_FS((uint8_t*)ratio, strlen(ratio));
+	HAL_Delay(30);
+	CDC_Transmit_FS((uint8_t*)" is: ",5);
+	HAL_Delay(30);
+	CDC_Transmit_FS((uint8_t*)ppm, strlen(ppm));
+}
+
+

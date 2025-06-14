@@ -1,0 +1,23 @@
+2025-04-15 11:53:27,770 [INFO] Activator:176 - 
+
+
+2025-04-15 11:53:27,776 [INFO] Activator:177 - !SESSION log4j initialized
+2025-04-15 11:53:33,353 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 
+2025-04-15 11:53:35,717 [INFO] ApplicationProperties:184 - Using Application install path: C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554
+2025-04-15 11:53:35,769 [INFO] DbMcusXml:78 - Set database path to: C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554\\db\/mcu/
+2025-04-15 11:53:35,771 [INFO] ApiDb:274 - Set plugin database path to: C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554\\db\/plugins/boardmanager/
+2025-04-15 11:53:35,772 [WARN] ApiDb:259 - Overriding images path with different value:  => C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554\\db\/plugins/mcufinder/images/
+2025-04-15 11:53:35,793 [INFO] ApiDb:250 - Set database path to: C:\Users\damia\.stmcufinder\plugins\mcufinder//mcu/
+2025-04-15 11:53:35,796 [INFO] DbMcusAds:125 - Set database path to: C:\Users\damia\.stmcufinder\plugins\mcufinder//mcu/
+2025-04-15 11:53:35,801 [INFO] CrossReferenceDbSqlite:203 - Set database path to: C:\Users\damia\.stmcufinder\plugins\mcufinder//mcu/cs/
+2025-04-15 11:53:36,334 [INFO] RulesReader:64 - Compatibility file has been processed (301 Rules)
+2025-04-15 11:53:36,464 [INFO] DbMcusXml:78 - Set database path to: C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554\\db\/mcu/
+2025-04-15 11:53:36,464 [INFO] ApiDb:274 - Set plugin database path to: C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554\\db\/plugins/boardmanager/
+2025-04-15 11:53:36,464 [INFO] ApiDb:261 - Set plugin images path to: C:\ST\STM32CubeIDE_1.18.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.14.0.202502271554\\db\/plugins/mcufinder/images/
+2025-04-15 11:53:36,465 [WARN] DbFile:41 - Overriding database path with different value: C:\Users\damia\.stmcufinder\plugins\mcufinder/ => C:\Users\damia\.stmcufinder\plugins\mcufinder
+2025-04-15 11:53:36,465 [INFO] ApiDb:250 - Set database path to: C:\Users\damia\.stmcufinder\plugins\mcufinder//mcu/
+2025-04-15 11:53:36,465 [WARN] DbFile:41 - Overriding database path with different value: C:\Users\damia\.stmcufinder\plugins\mcufinder/ => C:\Users\damia\.stmcufinder\plugins\mcufinder
+2025-04-15 11:53:36,465 [INFO] DbMcusAds:125 - Set database path to: C:\Users\damia\.stmcufinder\plugins\mcufinder//mcu/
+2025-04-15 11:53:36,465 [WARN] DbFile:41 - Overriding database path with different value: C:\Users\damia\.stmcufinder\plugins\mcufinder/ => C:\Users\damia\.stmcufinder\plugins\mcufinder
+2025-04-15 11:53:36,465 [WARN] DbFile:41 - Overriding database path with different value: C:\Users\damia\.stmcufinder\plugins\mcufinder/ => C:\Users\damia\.stmcufinder\plugins\mcufinder
+2025-04-15 11:53:36,465 [INFO] CrossReferenceDbSqlite:203 - Set database path to: C:\Users\damia\.stmcufinder\plugins\mcufinder//mcu/cs/

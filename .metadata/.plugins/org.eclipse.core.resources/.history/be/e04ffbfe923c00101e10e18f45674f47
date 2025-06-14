@@ -1,0 +1,121 @@
+
+#include "bme280.h"
+#include "bme280_add.h"
+#include "bme280_defs.h"
+#include "i2c.h"
+#include <stdio.h>
+#include "usb_device.h"
+#include "usbd_cdc_if.h"
+
+static struct bme280_dev bme;
+static struct bme280_data comp_data;
+static int8_t init_done;
+
+
+int8_t BME280_init(void) {
+	int8_t rslt = BME280_OK;
+	uint8_t settings_sel;
+	init_done = BME280_E_DEV_NOT_FOUND;
+
+	bme.dev_id = (BME280_I2C_ADDR_PRIM<<1);
+	bme.intf = BME280_I2C_INTF;
+	bme.read = i2c_read;
+	bme.write = i2c_write;
+	bme.delay_ms = delay_ms;
+
+	rslt = bme280_init(&bme);
+
+	/* Recommended mode of operation: Indoor navigation */
+	bme.settings.osr_h = BME280_OVERSAMPLING_1X;
+	bme.settings.osr_p = BME280_OVERSAMPLING_16X;
+	bme.settings.osr_t = BME280_OVERSAMPLING_2X;
+	bme.settings.filter = BME280_FILTER_COEFF_16;
+	bme.settings.standby_time = BME280_STANDBY_TIME_62_5_MS;
+
+	if(rslt == BME280_OK)
+	{
+		settings_sel = BME280_OSR_PRESS_SEL;
+		settings_sel |= BME280_OSR_TEMP_SEL;
+		settings_sel |= BME280_OSR_HUM_SEL;
+		settings_sel |= BME280_STANDBY_SEL;
+		settings_sel |= BME280_FILTER_SEL;
+
+		rslt = bme280_set_sensor_settings(settings_sel, &bme);
+
+		if(rslt == BME280_OK)
+		{
+			rslt = bme280_set_sensor_mode(BME280_NORMAL_MODE, &bme);
+			init_done = rslt;
+		}
+	}
+
+	return rslt;
+}
+
+/* read data in normal mode */
+int8_t BME280_read_data(void) {
+	int8_t rslt = BME280_E_COMM_FAIL;
+
+	if(init_done == BME280_OK)
+	{
+		//printf("Temperature, Pressure, Humidity\r\n");
+		/* Pobranie danych z czujnika i wyswietlenie */
+		rslt = bme280_get_sensor_data(BME280_ALL, &comp_data, &bme);
+		bme.delay_ms(100);
+		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+		print_sensor_data(&comp_data);
+	}
+
+	return rslt;
+}
+
+void print_sensor_data(struct bme280_data *comp_data) {
+#ifdef BME280_FLOAT_ENABLE
+		char temp[20];    // Bufor na sformatowaną temperaturę
+	    char pre[20];     // Bufor na sformatowane ciśnienie
+	    char hum[20];     // Bufor na sformatowaną wilgotność
+
+	    // Formatowanie danych
+	    sprintf(temp, "%.2f", comp_data->temperature);   // Sformatuj temperaturę
+	    sprintf(pre, "%.2f", comp_data->pressure);       // Sformatuj ciśnienie
+	    sprintf(hum, "%.2f", comp_data->humidity);       // Sformatuj wilgotność
+
+	    // Wysyłanie danych przez USB
+	    CDC_Transmit_FS((uint8_t*)"\n\n\rTemperature: ", 15);
+	    HAL_Delay(100);
+	    CDC_Transmit_FS((uint8_t*)temp, strlen(temp));  // Wyślij sformatowaną temperaturę
+	    HAL_Delay(100);
+	    CDC_Transmit_FS((uint8_t*)"\n\rPressure: ", 11);
+	    HAL_Delay(100);
+	    CDC_Transmit_FS((uint8_t*)pre, strlen(pre));    // Wyślij sformatowane ciśnienie
+	    HAL_Delay(100);
+	    CDC_Transmit_FS((uint8_t*)"\n\rHumidity: ", 11);
+	    HAL_Delay(100);
+	    CDC_Transmit_FS((uint8_t*)hum, strlen(hum));    // Wyślij sformatowaną wilgotność
+	    CDC_Transmit_FS("Carbon monoxide:",17);
+	    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+#else
+	CDC_Transmit_FS("\n\nTemperature: ",14);
+	//CDC_Transmit_FS(comp_data->temperature,7);
+	CDC_Transmit_FS("\n\nPressure: ",14);
+	//CDC_Transmit_FS(comp_data->pressure,7);
+	CDC_Transmit_FS("\n\nHumidity: ",14);
+	//CDC_Transmit_FS(comp_data->humidity,7);
+#endif
+}
+
+void delay_ms(uint32_t period) {
+	HAL_Delay(period);
+}
+
+int8_t i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
+    int8_t rslt = 0; /* Return 0 for Success, non-zero for failure */
+    HAL_I2C_Mem_Read(&hi2c3, dev_id, reg_addr, 1, reg_data, len, 100);
+    return rslt;
+}
+
+int8_t i2c_write(uint8_t dev_id, uint8_t reg_addr, uint8_t *reg_data, uint16_t len) {
+    int8_t rslt = 0; /* Return 0 for Success, non-zero for failure */
+    HAL_I2C_Mem_Write(&hi2c3, dev_id, reg_addr, 1, reg_data, len, 100);
+    return rslt;
+}
